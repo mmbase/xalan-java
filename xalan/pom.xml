@@ -47,6 +47,15 @@
     </resources>
 
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
       <!-- https://github.com/vbmacher/cup-maven-plugin
 
             NOTE: There is an XPathParser.java in both xalan/xsltc/compiler/ and
@@ -113,19 +122,7 @@
           <ignorePublishedComponents>true</ignorePublishedComponents>
         </configuration>
       </plugin>
-      <plugin>
-        <artifactId>maven-gpg-plugin</artifactId>
-        <version>3.2.8</version>
-        <executions>
-          <execution>
-            <id>sign-artifacts</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>sign</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+
     </plugins>
 
   </build>
@@ -235,13 +232,13 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-inline</artifactId>
-      <version>5.2.0</version>
+      <version>4.11.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-junit-jupiter</artifactId>
-      <version>5.3.0</version>
+      <version>4.11.0</version>
       <scope>test</scope>
     </dependency>
 
@@ -307,6 +304,26 @@
                 <id>attach-sources</id>
                 <goals>
                   <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>deploy</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.2.8</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
                 </goals>
               </execution>
             </executions>
