@@ -2,16 +2,31 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>xalan</groupId>
-    <artifactId>xalan-j</artifactId>
-    <version>2.7.3</version>
-  </parent>
   <groupId>org.mmbase.xalan</groupId>
   <artifactId>xalan</artifactId>
+  <version>2.7.3-1</version>
+
   <name>Apache Xalan-Java</name>
   <description>Apache's XSLT processor</description>
+  <url>https://github.com/mmbase/xalan-java/</url>
+  <scm>
+    <url>${project.url}</url>
+  </scm>
+  <developers>
+    <developer>
+      <id>michiel</id>
+      <name>Michiel Meeuwissen</name>
+    </developer>
+  </developers>
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
   <properties>
+    <xalan.version>2.7.3</xalan.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <build>
@@ -32,10 +47,6 @@
     </resources>
 
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
       <!-- https://github.com/vbmacher/cup-maven-plugin
 
             NOTE: There is an XPathParser.java in both xalan/xsltc/compiler/ and
@@ -87,54 +98,34 @@
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.3.1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>0.9.0</version>
+        <extensions>true</extensions>
+        <configuration>
+          <publishingServerId>central</publishingServerId>
+          <autoPublish>true</autoPublish>
+          <waitUntil>published</waitUntil>
+          <ignorePublishedComponents>true</ignorePublishedComponents>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>3.2.8</version>
         <executions>
           <execution>
-            <phase>package</phase>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
             <goals>
-              <goal>shade</goal>
+              <goal>sign</goal>
             </goals>
-            <configuration>
-              <artifactSet>
-                <excludes>
-                  <exclude>com.github.vbmacher:java-cup</exclude>
-                  <exclude>commons-logging:commons-logging</exclude>
-                  <exclude>org.apache.commons:commons-lang3</exclude>
-                  <exclude>org.apache.ant:ant</exclude>
-                  <exclude>org.apache.ant:ant-launcher</exclude>
-                  <exclude>xalan:serializer</exclude>
-                  <exclude>de.jflex:jflex</exclude>
-                </excludes>
-              </artifactSet>
-              <relocations>
-                <!-- We could instead make java-cup-runtime another dependency
-                     provided externally, and perhaps should, but this
-                     replicates the ant build's practice of including it
-                     while keeping it from interfering with a user instance.
-                     TODO: REVIEW.
-                -->
-                <relocation>
-                  <pattern>java_cup.runtime</pattern>
-                  <shadedPattern>org.apache.xalan.shaded.java_cup.runtime</shadedPattern>
-                </relocation>
-              </relocations>
-            </configuration>
           </execution>
         </executions>
       </plugin>
-
-      <!-- Copy generated jarfile up to xalan-java/build/,
-           for backward compatibility with Ant builds. -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-      </plugin>
-      <!-- And -source.jar -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-      </plugin>
-
     </plugins>
 
   </build>
@@ -143,12 +134,7 @@
     <dependency>
       <groupId>xalan</groupId>
       <artifactId>serializer</artifactId>
-    </dependency>
-    <!-- For javadoc generation only, hence 'provided' scope -->
-    <dependency>
-      <groupId>xalan</groupId>
-      <artifactId>${xalan.taglet.artifactId}</artifactId>
-      <scope>provided</scope>
+      <version>${xalan.version}</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.apache.bcel/bcel -->
@@ -237,21 +223,25 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.14.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-params</artifactId>
+      <version>5.14.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-inline</artifactId>
+      <version>5.2.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-junit-jupiter</artifactId>
+      <version>5.3.0</version>
       <scope>test</scope>
     </dependency>
 
@@ -263,7 +253,7 @@
       <activation>
         <!--
           Activate by default. Workaround for 'activeByDefault', which is broken
-          by design, see https://issues.apache.org/jira/browse/MNG-4917.
+          by design, see
         -->
         <jdk>[1,)</jdk>
       </activation>
@@ -272,6 +262,27 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.12.0</version>
+            <configuration>
+              <excludePackageNames>xalan2jtaglet</excludePackageNames>
+              <doclint>none</doclint>
+              <tags>
+                <tag>
+                  <name>xsl.usage</name>
+                  <placement>a</placement>
+                  <head>XSL Usage:</head>
+                </tag>
+              </tags>
+            </configuration>
+
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>
@@ -290,6 +301,15 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
+            <version>3.4.0</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>
