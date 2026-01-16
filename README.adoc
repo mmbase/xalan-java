@@ -1,5 +1,8 @@
 = This fork
 
+image:https://img.shields.io/maven-central/v/org.mmbase.xalan/xalan.svg[MavenCentral,link=https://central.sonatype.com/search?q=g%3Aorg.mmbase.xalan]
+
+
 We just use this fork to publish a build of the xalan jar with the latest bug fixes.
 
 Xalan is very seldomly released. We just publish a build (only of xalan itself) with different coordinates (and version post fixed with a -<number>). So that we can use it in other projects (well, in this case just MMBase).
@@ -11,4 +14,11 @@ Xalan is very seldomly released. We just publish a build (only of xalan itself) 
   <artifactId>xalan</artifactId>
   <version>2.7.3-1</version>
 </dependency>
+<dependency>
+  <groupId>org.mmbase.xalan</groupId>
+  <artifactId>serializer</artifactId>
+  <version>2.7.3-3</version>
+</dependency>
 ----
+
+
